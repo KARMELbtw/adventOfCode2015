@@ -5,13 +5,18 @@ fn main() -> std::io::Result<()>{
     let input = input.trim();
 
     let mut i = 0;
+    let mut first_found = false;
 
     loop {
         let candidate = format!("{}{}", input, i);
         let digest = md5::compute(candidate);
         let hash = format!("{:x}", digest);
 
-        if hash.starts_with("00000") {
+        if hash.starts_with("00000") && !first_found {
+            println!("First Answer {}", i);
+            first_found = true;
+        }
+        if hash.starts_with("000000") {
             println!("First Answer {}", i);
             break;
         }
