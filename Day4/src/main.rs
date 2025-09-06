@@ -17,7 +17,7 @@ fn main() -> std::io::Result<()>{
             first_found = true;
         }
         if hash.starts_with("000000") {
-            println!("First Answer {}", i);
+            println!("Second Answer {}", i);
             break;
         }
         i += 1;
