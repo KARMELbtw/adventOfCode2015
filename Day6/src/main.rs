@@ -7,7 +7,8 @@ fn main() -> io::Result<()> {
     let file = File::open("input.txt")?;
     let reader = BufReader::new(file);
     let regex = Regex::new(r"(\d+),(\d+) through (\d+),(\d+)").unwrap();
-    let mut grid = vec![false; 1000000];
+    let mut grid1 = vec![false; 1000000];
+    let mut grid2 = vec![0; 1000000];
     let idx = |x: usize, y: usize| x * 1000 + y;
 
     for line_result in reader.lines() {
@@ -22,20 +23,27 @@ fn main() -> io::Result<()> {
                 for y in y1..=y2 {
                     let i = idx(x, y);
                     if line.contains("toggle") {
-                        grid[i] = !grid[i];
+                        grid1[i] = !grid1[i];
+                        grid2[i] += 2;
                     } else if line.contains("turn on") {
-                        grid[i] = true;
+                        grid1[i] = true;
+                        grid2[i] += 1;
                     } else if line.contains("turn off") {
-                        grid[i] = false;
+                        grid1[i] = false;
+                        if grid2[i] > 0 {
+                            grid2[i] -= 1;
+                        }
                     }
                 }
             }
         }
     }
 
-    let lights_on_amount = grid.iter().filter(|&&b| b).count();
+    let lights_on_amount = grid1.iter().filter(|&&b| b).count();
+    let total_brightness :i32 = grid2.iter().sum();
 
     println!("First Answer: {}", lights_on_amount);
+    println!("Second Answer: {}", total_brightness);
 
     Ok(())
 }
