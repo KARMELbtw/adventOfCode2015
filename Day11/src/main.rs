@@ -49,7 +49,7 @@ fn is_valid(password: &[char]) -> bool {
         }
     }
 
-    pair_count >= 2
+      pair_count >= 2
 }
 
 fn increment(password: &mut Vec<char>) {
