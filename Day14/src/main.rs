@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::{BufRead, BufReader};
@@ -54,9 +55,22 @@ fn main() -> io::Result<()>{
         reindeers.push(Reindeer::new(name.parse().unwrap(), numbers[0], numbers[1], numbers[2]));
     }
 
-    let max = reindeers.iter().map(|reindeer| reindeer.calc_distance(2503)).max().unwrap();
+    let max_distance = reindeers.iter().map(|reindeer| reindeer.calc_distance(2503)).max().unwrap();
 
-    println!("First Answer: {max}");
+    let mut points: HashMap<String, i32> = HashMap::new();
+
+    for i in 1..2504 {
+        let max = reindeers.iter().map(|r| r.calc_distance(i)).max().unwrap();
+
+        for r in reindeers.iter().filter(|r| r.calc_distance(i) == max) {
+            *points.entry(r.name.clone()).or_insert(0) += 1;
+        }
+    }
+
+    let max_points = points.iter().max_by_key(|entry| entry.1).unwrap().1;
+
+    println!("First Answer: {max_distance}");
+    println!("Second Answer: {max_points}");
 
     Ok(())
 }
