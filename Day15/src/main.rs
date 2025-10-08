@@ -9,6 +9,7 @@ struct Ingredient {
     durability: i32,
     flavor: i32,
     texture: i32,
+    calories: i32,
 }
 
 fn combinations(total: i32, n: usize) -> Vec<Vec<i32>> {
@@ -28,17 +29,19 @@ fn combinations(total: i32, n: usize) -> Vec<Vec<i32>> {
     result
 }
 
-fn score(ingredients: &[Ingredient], amounts: &[i32]) -> i32 {
+fn score(ingredients: &[Ingredient], amounts: &[i32]) -> (i32, i32) {
     let mut capacity = 0;
     let mut durability = 0;
     let mut flavor = 0;
     let mut texture = 0;
+    let mut calories = 0;
 
     for (ing, &amt) in ingredients.iter().zip(amounts.iter()) {
         capacity += ing.capacity * amt;
         durability += ing.durability * amt;
         flavor += ing.flavor * amt;
         texture += ing.texture * amt;
+        calories += ing.calories * amt;
     }
 
     capacity = capacity.max(0);
@@ -46,7 +49,7 @@ fn score(ingredients: &[Ingredient], amounts: &[i32]) -> i32 {
     flavor = flavor.max(0);
     texture = texture.max(0);
 
-    capacity * durability * flavor * texture
+    (capacity * durability * flavor * texture, calories)
 }
 
 fn main() -> io::Result<()>{
@@ -59,10 +62,11 @@ fn main() -> io::Result<()>{
     for line in reader.lines() {
         let line = line?;
         let numbers: Vec<i32> = regex.find_iter(&*line).map(|m| m.as_str().parse::<i32>().unwrap()).collect();
-        ingredients.insert(0, Ingredient {capacity: numbers[0], durability: numbers[1], flavor: numbers[2], texture: numbers[3]});
+        ingredients.insert(0, Ingredient {capacity: numbers[0], durability: numbers[1], flavor: numbers[2], texture: numbers[3], calories: numbers[4]});
     }
 
     let mut max_score = 0;
+    let mut max_score_calories = 0;
 
     let n = 4;
     let total = 100;
@@ -71,11 +75,16 @@ fn main() -> io::Result<()>{
 
     for combo in combos {
         let s = score(&ingredients, &combo);
-        if s > max_score {
-            max_score = s;
+        if s.0 > max_score {
+            max_score = s.0;
+        }
+
+        if s.0 > max_score_calories && s.1 == 500 {
+            max_score_calories = s.0;
         }
     }
 
     println!("First Answer: {max_score}");
+    println!("Second Answer: {max_score_calories}");
     Ok(())
 }
