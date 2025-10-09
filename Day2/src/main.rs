@@ -20,7 +20,7 @@ fn main() -> io::Result<()> {
             let mut dims = [l, w, h];
             dims.sort();
 
-            total_area += 2*l*2 + 2*2*h + 2*h*l + dims[0]*dims[1];
+            total_area += 2*l*w + 2*w*h + 2*h*l + dims[0]*dims[1];
             ribbon_length += 2*(dims[0]+dims[1]) + l*w*h;
         }
     }
